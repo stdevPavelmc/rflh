@@ -1,0 +1,8 @@
+build/*
+_*
+data/*
+dist/*
+*.pyc
+*.spec
+.vscode/
+test.py
