@@ -7,7 +7,7 @@ import random as rnd
 from rotor import *
 
 # description
-parser = argparse.ArgumentParser(description='Sweep the 360 degrees recording the levels of a frequency at a given bandwidth; using rotctld and a RTL-SDR (default) or a HackRF One for spectrum sensing.')
+parser = argparse.ArgumentParser(description='Sweep the 360o around recording the signals levels of a frequency at a given bandwidth; using rotctld and a RTL-SDR (default) or a HackRF One for spectrum sensing.')
 
 # frequency
 parser.add_argument(
@@ -27,11 +27,23 @@ parser.add_argument(
     type=int,
     help='Azimuth steps in degrees, 10 degrees by default, see project README.md for details.')
 
-# -k / --dark
+# -u / --paused
 parser.add_argument(
-    '-k', '--dark',
-    help='Graph mode: dark (light by default)',
+    '-u', '--paused',
+    help='Sweep mode: paused mode means move to target azimuth & take a measurement the repeat it (slow). The default is to make one full turn and do measurements on the fly (faster but may fail, read the documentation)',
     action="store_true")
+
+# -bs / --bucketsize
+parser.add_argument(
+    '-t', '--bucketsize',
+    type=int,
+    help='Bucket size: how many bytes to get for processing at each sample time, 1.024 Mbytes by default (use 2^n units or it will fail) 1.024 Mbytes = 1024000')
+
+# -p / --ppm
+parser.add_argument(
+    '-p', '--ppm',
+    type=int,
+    help='Frequency correction for you device, by default 0.0')
 
 # -q / --quiet
 parser.add_argument(
@@ -81,22 +93,10 @@ parser.add_argument(
     help='Use a HackRF One instead the default: RTL-SDR',
     action="store_true")
 
-# -p / --ppm
+# -k / --dark
 parser.add_argument(
-    '-p', '--ppm',
-    type=int,
-    help='Frequency correction for you device, by default 0.0')
-
-# -bs / --bucketsize
-parser.add_argument(
-    '-t', '--bucketsize',
-    type=int,
-    help='Bucket size: how many bytes to get for processing at each sample time, 1.024 Mbytes by default (use 2^n units or it will fail) 1.024 Mbytes = 1024000')
-
-# -u / --paused
-parser.add_argument(
-    '-u', '--paused',
-    help='Rotor control strategy: move to target azimuth & take a measurement the repeat it (slow). The default is to make one full turn and do measurements on the fly (faster)',
+    '-k', '--dark',
+    help='Graph mode: dark (light by default)',
     action="store_true")
 
 args = parser.parse_args()
@@ -162,7 +162,7 @@ if args.bucketsize:
 paused = False
 if args.paused:
     paused = True
-elif args.step <= 5:
+elif args.step and args.step <= 5:
     print("WARNING: You selected a step less than 6 degrees & fast scanning, most hardware can\'t handle that!")
 
 # conditional load of the device
@@ -352,7 +352,7 @@ try:
             r="level",
             range_r=[min, max],
             template=gmode,
-            title="{}: ({}: {}) {:.3f} MHz, bandwidth: {:.1f} kHz, {} degree steps, {:.3f} dB of DNR".format(
+            title="{}: ({}: {}) {:.3f} MHz, BW: {:.1f} kHz, {}॰ steps, {:.3f} dB of DNR".format(
                 device.capitalize(),
                 speed,
                 "{}:{}".format(
