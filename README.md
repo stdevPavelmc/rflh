@@ -10,66 +10,19 @@ WARNING: This repository is new and under construction, you will see some [TODO]
 
 This project born from a friend's challenge to measure the background noise impact on my 70cm satellite band noise floor, from a new 2/3/4G cellular tower that my ISP is setting up 50m away from my antennas and with direct sight.
 
-Soon I realized the true potential of it and it get bigger and feature rich.
+Soon I realized the true potential of it and it get bigger and feature rich quickly.
 
 ## Features
 
-TLDR; you get a tool to plot a graph and a csv file with the plotted data to process as you wish.
-
-The full feature and option list is given on the console runnig the script with `-h` or `--help` to show them.
+TLDR; you get a tool to plot a web graph and a csv file (data directory) with the plotted data to process as you wish.
 
 For a more detailed technical stuff on the features see [OPTIONS_EXPLAINED.md](OPTIONS_EXPLAINED.md) (work in progress...)
 
-
 ## Installation
 
-As any script in python you will need some dependencies, default dev env is Ubuntu Linux 20.04 LTS, I'm testing a single portable file for linux/windows/mac but it's not ready yet (pyinstall stuff, [TODO])
+As any script in python you will need some dependencies, default dev env is Ubuntu Linux 20.04 LTS. I'm working/testing a single portable file for linux/windows/mac but it's not ready yet (pyinstall stuff)
 
-- Python 3.6 or bigger
-- pandas, numpy, pyrtlsdr & scipy modules installed
-- rtlsdr or hackrf support on your system (depending on the device you have)
-- hamlib support in your system
-
-The installation of this modules and utilities is out of the scope of this document, google it. [TODO: dedicated config details]
-
-### Testing for support
-
-Once you have rtl-sdr or hackrf support you can run the `rtl.py` or the `hrf.py` files directly to test if device comms is working, for example for the rtl-sdr
-
-```sh
-pavel@agathad:~/rflh/$ python3 rtl.py 
-Detached kernel driver
-Found Rafael Micro R820T tuner
-[R82XX] PLL not locked!
-Bin bw is 8 khz, with 245 segments, 6 samples in the BW
-Frequency: 440. MHz, 200 Khz bandwidth
-Mean level: -102.59626714939752
-Reattached kernel driver
-pavel@agathad:~/rflh/$
-```
-
-If you see the `Mean level: -xx.yyy` message and no error is present you have a working device. (the same is applicable to the hackrf one)
-
-For the rotor comms you need to setup your rotor with the hamlib `rotctld` tool to listen in the localhost for instructions, the script will talk to it.
-
-To test the rotor run the `rotor.py` script and you will get a result like this (please allow some time to the rotor to move to the 0, 0 position)
-
-```sh
-pavel@agathad:~/rflh/$ python3 rotor.py 
-Azimuth, actual: 0.0, set: 0
-Azimuth, actual: 10.0, set: 10
-Azimuth, actual: 20.0, set: 20
-Azimuth, actual: 30.0, set: 30
-Azimuth, actual: 40.0, set: 40
-Azimuth, actual: 50.0, set: 50
-Azimuth, actual: 60.0, set: 60
-Azimuth, actual: 70.0, set: 70
-Azimuth, actual: 80.0, set: 80
-Azimuth, actual: 90.0, set: 90
-pavel@agathad:~/rflh/$
- ```
-
-Unfortunately the rotor interface on hamlib has no error or feedback if you configured your rotor badly.
+The installation of the utilities & python modules are covered in the [Install requisites](INSTALL_REQUISITES.md) document.
 
 ### Examples (use cases)
 
