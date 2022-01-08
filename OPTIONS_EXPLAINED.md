@@ -6,7 +6,7 @@ The full feature and option list is given on the console runnig the script with 
 
 ```sh
 pavel@agathad:~/rflh$ python3 rflh.py  -h
-usage: rflh.py [-h] [-b  BANDWIDTH] [-s STEP] [-u] [-t BUCKETSIZE] [-p PPM] [-q] [-j] [-n] [-d] [-l LNA] [-v VGA] [-a] [-o] [-k] frequency
+usage: rflh.py [-h] [-b  BANDWIDTH] [-s STEP] [-u] [-t BUCKETSIZE] [-p PPM] [-q] [-j] [-n] [-d] [-l LNA] [-v VGA] [-a] [-o] [-i] frequency
 
 Sweep the 360 degrees around recording the levels of a frequency at a given bandwidth; using rotctld and a RTL-SDR (default) or a HackRF One for spectrum sensing.
 
@@ -30,6 +30,7 @@ optional arguments:
   -q, --quiet           Quiet: supress output, default: verbose
   -j, --just_data       Don't generate the web graph, default: generate it
   -n, --nofile          Don't save the csv file, default: save it
+  -i, --interactive     Pop up a Matplotlib interactive graph with the results, default is no pop up
   -d, --dummy           Don't use the rotor or the RTL-SDR or HackRF, just generate a dummy
                         dataset and plot it; it implies --nofile; just for testing purposes
   -l LNA, --lna LNA     LNA gain value: 0-49.6 dB in 0.4 dB for the RTL-SDR or 0-40 dB in 8 dB
@@ -38,7 +39,6 @@ optional arguments:
   -a, --amp_on          Amplifier on (Only HackRF One): by default it's disabled; WATCH OUT!
                         some firmware revision has this option reversed (mine has it)
   -o, --hackrfone       Use a HackRF One instead the default: RTL-SDR
-  -k, --dark            Graph mode: dark (light by default)
 
 pavel@agathad:~/rflh$ 
 ```
@@ -83,6 +83,28 @@ On paused sweep mode, we make blocking calls to the rotor to move to a ceirtain 
 
 For example in fastmode and 5 degrees my hardware took 55 seconds, and 3 min 48 seconds on paused sweep mode. (bucket size of 512k)
 
+**Tip:** In fast mode you will see (if you don't select the quiet switch) that the app shows the position and level but will show more data...
+
+```
+(...)
+310(307.5);-102,16941998017171
+320(317.5);-101,77656601734243
+330(327.5);-101,55990296468812
+340(337.5);-101,583492037594
+350(347.5);-102,01302571365707
+Scan took 0:53
+CSVFile: data/20220108_1357_rtl_145.17MHz_300kHz_10o.csv
+Parking the rotor in the background
+Reattached kernel driver
+Dynamc range: 2.9333941135273136 dB, 10%: 0.2933394113527314
+Min: -104.78663648956817, Max -101.26656355333539
+ImgFile: data/20220108_1357_rtl_145.17MHz_300kHz_10o.png
+```
+
+See the line `350(347.5);-102,01302571365707` this measurements correspond to the 350 degree point but mean position during the sampling was 347.5 degrees, this is shown as a measuremnt of the real error in the fast sweep mode.
+
+This is used to fail when the sampling and processing can't cope with the rotor speed.
+
 ## Bucket size
 
 That's the amount of data to collect for a given spectrum sampling, by default 1.024 Mbytes will be collected.
@@ -106,6 +128,10 @@ As it's name implies it does not generate the pandas dataset and corresponding w
 ## No file
 
 This option will stop the CSV file creation with the data for the sweep. Useful when you are just testing and don't mind the datasets creation at the end of the sweep.
+
+## Interactive graph
+
+If you issue the `-i` option on a GUI system you will see a matplotlib graph with pan/zoom/saving features to interact to.
 
 ## Dummy data
 
@@ -141,10 +167,3 @@ The `amp on` is a unique feature of the HackRF One, it's an internal, but it has
 On some hardware revisions its function is inverted! Yes, when you turn on the amplifier in software it got shut off in the hardware, weird.
 
 You have to check on your particular device the effects of this switch. My hardware has it reversed, so I shut it off by default (aka: turned on bu default)
-
-## Dark graphs (why not?)
-
-The plotly graph generated is by default themed light, but you can theme it dark to match your site, like this:
-
-![background noise measurement 145 Mhz](/imgs/145.png) ![background noise measurement 436 Mhz](/imgs/436.png)
-
