@@ -1,9 +1,9 @@
 import time
 import argparse
 import os
-import plotly.express as px
-import pandas as pd
+import matplotlib.pyplot as plt
 import random as rnd
+from math import pi
 from rotor import *
 
 # description
@@ -260,7 +260,7 @@ try:
                 print("0(0);{}".format(str(l).replace(".", ",")))
             # start turning!
             r.go_to(360)
-            while a < (360 - astep + 1):
+            while a < (360 - astep):
                 (a, e) = r.get_position()
                 if (at - a) < (astep / 2):
                     # data 
@@ -328,44 +328,73 @@ try:
         margin = 0.5
     else:
         margin = tmargin * 0.1
-    min = amin - margin
-    max = amax + margin
+    lmin = amin - margin
+    lmax = amax + margin
 
     if not quiet:
         print("Dynamc range: {} dB, 10%: {}".format(tmargin, margin))
-        print("Min: {}, Max {}".format(min, max))
+        print("Min: {}, Max {}".format(lmin, lmax))
 
     if not just_data:
-        # pandas dataframe
-        df = pd.DataFrame(
-            list(zip(labels, levels)),
-            columns=['direction', 'level']
-        )
-
         speed = 'fast'
         if paused:
             speed = 'paused'
 
-        fig = px.scatter_polar(
-            df,
-            theta="direction",
-            r="level",
-            range_r=[min, max],
-            template=gmode,
-            title="{}: ({}: {}) {:.3f} MHz, BW: {:.1f} kHz, {}॰ steps, {:.3f} dB of DNR".format(
-                device.capitalize(),
-                speed,
-                "{}:{}".format(
-                    int(duration / 60), 
-                    int(duration % 60)
-                ),
-                fq,
-                bw,
-                astep,
-                tmargin))
+        title = u"{}: ({}: {}) {:.3f} MHz, BW: {:.1f} kHz,\n{}o steps, {:.1f} dB of DNR".format(
+            device.upper(),
+            speed,
+            "{}:{} min".format(
+                int(duration / 60),
+                int(duration % 60)
+            ),
+            fq,
+            bw,
+            astep,
+            tmargin
+        )
 
-        fig.update_traces(fill='toself')
-        fig.show()
+        # create
+        fig = plt.figure()
+        ax = fig.add_subplot(label='title')
+        fig.subplots_adjust(top=0.85)
+
+        # Set titles for the figure and the subplot respectively
+        fig.suptitle(title, fontsize=12, fontweight='normal')
+
+        # repeat the last value to close the plot
+        levels += levels[:1]
+
+        # how many ticks/labels on the plot
+        N = len(labels)
+
+        # What will be the angle of each axis in the plot? (we divide the plot / number of variable)
+        angles = [n / float(N) * 2 * pi for n in range(N)]
+        # repeat the first one to close the graph
+        angles += angles[:1]
+
+        # Initialise the spider plot
+        ax = plt.subplot(111, polar=True, label='graph')
+
+        # Draw one axe per variable + add labels
+        plt.xticks(angles, labels, color='grey', size=8)
+
+        # set labels limits
+        plt.ylim(lmin, lmax)
+
+        # Plot data
+        ax.plot(angles, levels, linewidth=1, linestyle='solid')
+
+        # rotate
+        ax.set_theta_zero_location('N')
+
+        # make it clockwise
+        ax.set_theta_direction(-1)
+
+        # Fill area
+        ax.fill(angles, levels, 'b', alpha=0.1)
+
+        # Show the graph
+        plt.show()
 
     if not quiet:
         print("Parking the rotor in the background")
