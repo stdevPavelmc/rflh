@@ -54,13 +54,19 @@ parser.add_argument(
 # -j / --just_data
 parser.add_argument(
     '-j', '--just_data',
-    help='Don\'t generate the web graph, default: generate it',
+    help='Don\'t generate & save the graph, default: generate & save it',
     action="store_true")
 
 # -n / --nofile
 parser.add_argument(
     '-n', '--nofile',
     help='Don\'t save the csv file, default: save it',
+    action="store_true")
+
+# -i / --interactive
+parser.add_argument(
+    '-i', '--interactive',
+    help='Pop up a Matplotlib interactive graph with the results, default is no pop up',
     action="store_true")
 
 # -d / --dummy
@@ -93,12 +99,6 @@ parser.add_argument(
     help='Use a HackRF One instead the default: RTL-SDR',
     action="store_true")
 
-# -k / --dark
-parser.add_argument(
-    '-k', '--dark',
-    help='Graph mode: dark (light by default)',
-    action="store_true")
-
 args = parser.parse_args()
 
 # args setup
@@ -114,10 +114,6 @@ if args.step:
 else:
     astep = 10
 
-gmode = None
-if args.dark:
-    gmode = "plotly_dark"
-
 just_data = False
 if args.just_data:
     just_data = True
@@ -129,6 +125,10 @@ if args.quiet:
 nofile = False
 if args.nofile:
     nofile = True
+
+interactive = False
+if args.interactive:
+    interactive = True
 
 dummy = False
 if args.dummy:
@@ -307,6 +307,9 @@ try:
                 for v in labels:
                     f.writelines(str(v) + ";" + str(levels[i]).replace(".", ",") + "\n")
                     i = i + 1
+
+            if not quiet:
+                print("CSVFile: data/{}".format(savefile + ".csv"))
     else:
         # fake data
         rnd.seed()
@@ -401,14 +404,17 @@ try:
         ax.fill(angles, levels, 'b', alpha=0.1)
 
         # save only if not dummy
-        if not dummy:
+        if not dummy and not just_data:
             plt.savefig(
                 os.path.join(dfolder, savefile + '.png'),
                 bbox_inches='tight'
             )
+            if not quiet:
+                print("ImgFile: data/{}".format(savefile + ".png"))
 
-        # Show the graph
-        plt.show()
+        # Show the graph if instructed to
+        if interactive:
+            plt.show()
 
 except KeyboardInterrupt:
     print("\n\nCatching Ctrl+C: cleaning the house before leaving...")
