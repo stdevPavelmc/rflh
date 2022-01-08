@@ -3,6 +3,7 @@ _*
 data/*
 dist/*
 *.pyc
+*.pyo
 *.spec
 .vscode/
 test.py
