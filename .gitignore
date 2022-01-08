@@ -1,6 +1,6 @@
+data/*
 build/*
 _*
-data/*
 dist/*
 *.pyc
 *.pyo
