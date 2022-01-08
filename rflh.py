@@ -299,8 +299,8 @@ try:
                     os.path.mkdir(dfolder)
 
             # 20211219_2221_rtl_436.5MHz_200kHz_10o.csv
-            savefile = "{}_{}_{}MHz_{}kHz_{}o.csv".format(dt, device, fq, bw, astep)
-            with open(os.path.join(dfolder, savefile), 'w') as f:
+            savefile = "{}_{}_{}MHz_{}kHz_{}o".format(dt, device, fq, bw, astep)
+            with open(os.path.join(dfolder, savefile + '.csv'), 'w') as f:
                 # write header
                 f.writelines("Degrees;dBFs\n")
                 i = 0
@@ -318,6 +318,10 @@ try:
         levels = []
         for l in labels:
             levels.append(rnd.randrange(start, stop)/10.0)
+
+    if not quiet and not dummy:
+        print("Parking the rotor in the background")
+        clean_house()
 
     # statistics
     margin = 0.5
@@ -352,6 +356,9 @@ try:
             astep,
             tmargin
         )
+
+        # Turn interactive plotting off
+        plt.ioff()
 
         # create
         fig = plt.figure()
@@ -393,14 +400,15 @@ try:
         # Fill area
         ax.fill(angles, levels, 'b', alpha=0.1)
 
+        # save only if not dummy
+        if not dummy:
+            plt.savefig(
+                os.path.join(dfolder, savefile + '.png'),
+                bbox_inches='tight'
+            )
+
         # Show the graph
         plt.show()
-
-    if not quiet:
-        print("Parking the rotor in the background")
-
-    if not dummy:
-        clean_house()
 
 except KeyboardInterrupt:
     print("\n\nCatching Ctrl+C: cleaning the house before leaving...")
