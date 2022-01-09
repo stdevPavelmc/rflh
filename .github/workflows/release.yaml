@@ -1,0 +1,48 @@
+name: Build and Release
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Script
+      run: ./linux_setup.sh
+
+    - name: Python requisite installs
+      run: pip3 install -r requirements.txt pyinstaller
+
+    - name: App creation
+      run: python3 -m PyInstaller -yF --hidden-import Hamlib rflh.py
+
+    - name: Test App
+      run: cp rotor.conf dist/ && chmod +x ./dist/rflh && ./dist/rflh 145 -d
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: rflh
+        path: dist/rflh
+
+  release:
+    runs-on: ubuntu-20.04
+    needs: [build]
+    steps:
+    - uses: actions/checkout@master
+    - name: Create release
+      uses: Roang-zero1/github-create-release-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create GitHub release
+      uses: Roang-zero1/github-upload-release-artifacts-action@master
+      with:
+        args:
+        - dist/rflh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
