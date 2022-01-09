@@ -13,13 +13,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
 
     - name: Package Application
-      uses: JackMcKew/pyinstaller-action-linux@main
-      with:
-        path: ./
+      run: pip3 install -r requirements.txt pyinstaller
+      run: python3 -m PyInstaller -yF rflh.py
+
+    - name: Test App
+      run: chmod +x dist/rflh && ./dist/rflh 145 -d
 
     - uses: actions/upload-artifact@v2
       with:
         name: rflh
-        path: dist/linux
+        path: dist/rflh
+
