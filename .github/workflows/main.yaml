@@ -24,7 +24,7 @@ jobs:
       run: sudo apt install python3-libhamlib2 libhamlib-utils libhamlib2
 
     - name: App creation
-      run: python3 -m PyInstaller -yF rflh.py
+      run: python3 -m PyInstaller -yF --hidden-import Hamlib rflh.py
 
     - name: Test App
       run: cp rotor.conf dist/ && chmod +x ./dist/rflh && ./dist/rflh 145 -d
