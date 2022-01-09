@@ -40,7 +40,6 @@ jobs:
     - name: Create GitHub release
       uses: Roang-zero1/github-upload-release-artifacts-action@master
       with:
-        releaseId: ${{ needs.create_release.outputs.id }}
         args: dist/rflh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
