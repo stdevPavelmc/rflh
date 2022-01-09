@@ -11,7 +11,7 @@ on:
       - develop
 
 jobs:
-  build:
+  build-nongui:
 
     runs-on: ubuntu-20.04
 
@@ -32,6 +32,33 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: rflh
+        name: rflh-nogui
+        path: dist/rflh
+
+  build-gui:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Script
+      run: ./linux_setup.sh
+
+    - name: GUI install
+      run: sudo apt-get install python3-tk
+
+    - name: Python requisite installs
+      run: pip3 install -r requirements.txt pyinstaller
+
+    - name: App creation
+      run: python3 -m PyInstaller -yF --hidden-import Hamlib rflh.py
+
+    - name: Test App
+      run: cp rotor.conf dist/ && chmod +x ./dist/rflh && ./dist/rflh 145 -d
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: rflh-gui
         path: dist/rflh
 
