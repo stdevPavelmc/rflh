@@ -1,8 +1,6 @@
 name: Build and Release
 on:
-  pull_request:
-    branches:
-      - main
+  release:
 
 jobs:
   build:
