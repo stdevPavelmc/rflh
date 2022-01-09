@@ -1,10 +1,14 @@
+import sys
+import os
 import Hamlib
 import time
 import subprocess
+from pathlib import Path
 from configparser import ConfigParser
 
 # default vars
 MINSTEP = 5.0
+configfile = 'rotor.conf'
 
 class Rotor():
     def __init__(self):
@@ -19,10 +23,28 @@ class Rotor():
         self.MAX_EL = 90
 
     def loadconfig(self):
+        # find the correct place for the config file
+        local = True
+        cwd = os.getcwd()
+        defcf = os.path.join(cwd, configfile)
+
         # load config from the rotor.conf file
         config = ConfigParser()
+        if os.path.exists(defcf) and os.path.isfile(defcf):
+            print("rotor.conf at: {}".format(defcf))
+            config.read(defcf)
+        else:
+            if local:
+                print("Can't find the '{}' in the local directory".format(configfile))
+                print("Please copy & edit the rotor.conf file from the project page to this directory.")
+                sys.exit()
+            else:
+                import shutils
+                shutil.copyfile(os.path.join(sys._MEIPASS, configfile), defcf)
+                print("No rotor config file, a new one has been created, please edit it with your particular rotor configs and try it again.")
+                print(defcf)
+                sys.exit()
 
-        config.read('./rotor.conf')
         self.default = config.get('DEFAULT', 'rotor')
         self.model = config.get(self.default, 'model')
         self.device = config.get(self.default, 'device')
