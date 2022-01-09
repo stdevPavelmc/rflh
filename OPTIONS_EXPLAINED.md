@@ -167,3 +167,59 @@ The `amp on` is a unique feature of the HackRF One, it's an internal, but it has
 On some hardware revisions its function is inverted! Yes, when you turn on the amplifier in software it got shut off in the hardware, weird.
 
 You have to check on your particular device the effects of this switch. My hardware has it reversed, so I shut it off by default (aka: turned on bu default)
+
+## Examples (use cases)
+
+**Scenario 1:** Elevated noise floor on 70cm satellite band on some direction, broadband noise.
+
+- Will use 500 kHz of bandwidth.
+- High integration (bucket of ~8 Mbytes)
+- Slow scan as signal is noise and will ignore fast changing signals.
+- Step of 10 degrees (default)
+- High gain as we are measuring noise.
+- PPM here is useless as we are sampling the background noise.
+- Interactive graph popup
+
+```h
+pavel@agathad:~/rflh/$ python3 rflh.py 436 -b 500 -t 8192000 -u -l 40 -i
+[...]
+```
+
+**Scenario 2:** Unknown digital intruder on the 2m satellite band (145.828 Mhz) ~12khz width, intermitent signal (~ 0.5 seconds pulse interval)
+
+- Will use 15 kHz of bandwidth
+- Will use the ppm as we need accurate results and low bandwidth
+- Low integration (bucket of ~512 kbytes) to detect fast changing signals & fast sweep
+- Fast sweep to allow detection of fast changing signals (default)
+- Step of 5 degrees as I'm using a 4x15 el EME yagis with a narrow beamwidth
+- Default gain as we are using a +20dB LNA and high gain yagui array.
+
+```h
+pavel@agathad:~/rflh/$ python3 rflh.py 145.828 -b 15 -p 56 -t 512000 -s 5
+[...]
+```
+
+Graph shows peaks but no defined signal, will sweep again several times to get only csv data and process it on MS Excel or LO Calc later (no need for graphs, just data)
+
+```h
+pavel@agathad:~/rflh/$ python3 rflh.py 145.828 -b 15 -p 56 -t 512000 -s 5 -j
+[...]
+```
+
+**Scenario 3:** New [OEM] 6m yagui and need to check the radiation lobes as the datasheet is to good to be true.
+
+Neigbor HAM 800m away will radiate an 2khz wide MT63 transmission for about 2 minutes with 5W on 50.15 Mhz (antenna sweetspot according to the OEM) with his vertical antenna (omni)
+
+- Will use 3 kHz of bandwidth.
+- Will use the ppm as we need accurate results and low bandwidth
+- Medium integration for accuracy (bucket of ~2 Mbytes)
+- Slow scan as signal may vary/reflect
+- Step of 10 degrees (default)
+- Lower gain as we are measuring a near & powerful signal.
+- No data, just graph
+- Interactive graph popup
+
+```h
+pavel@agathad:~/rflh/$ python3 rflh.py 145.828 -b 3 -p 56 -t 2048000 -u -l 14 -n -i
+[...]
+```
