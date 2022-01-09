@@ -21,7 +21,7 @@ jobs:
       run: pip3 install -r requirements.txt pyinstaller
 
     - name: Hamlib-python install
-      run: sudo apt install python3-libhamlib2
+      run: sudo apt install python3-libhamlib2 libhamlib-utils libhamlib2
 
     - name: App creation
       run: python3 -m PyInstaller -yF rflh.py
