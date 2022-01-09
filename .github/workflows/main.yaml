@@ -5,10 +5,6 @@ on:
     branches:
       - main
       - develop
-  pull_request:
-    branches:
-      - main
-      - develop
 
 jobs:
   build-nongui:
@@ -25,7 +21,7 @@ jobs:
       run: pip3 install -r requirements.txt pyinstaller
 
     - name: App creation
-      run: python3 -m PyInstaller -yF --hidden-import Hamlib rflh.py
+      run: python3 -m PyInstaller -yF rflh.py
 
     - name: Test App
       run: cp rotor.conf dist/ && chmod +x ./dist/rflh && ./dist/rflh 145 -d
@@ -52,7 +48,7 @@ jobs:
       run: pip3 install -r requirements.txt pyinstaller
 
     - name: App creation
-      run: python3 -m PyInstaller -yF --hidden-import Hamlib rflh.py
+      run: python3 -m PyInstaller -yF rflh.py
 
     - name: Test App
       run: cp rotor.conf dist/ && chmod +x ./dist/rflh && ./dist/rflh 145 -d
