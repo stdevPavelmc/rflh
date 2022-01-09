@@ -17,8 +17,10 @@ jobs:
       with:
         python-version: 3.8
 
-    - name: Package Application
+    - name: Python requisite installs
       run: pip3 install -r requirements.txt pyinstaller
+
+    - name: App creation
       run: python3 -m PyInstaller -yF rflh.py
 
     - name: Test App
