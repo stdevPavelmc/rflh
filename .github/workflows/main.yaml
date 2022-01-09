@@ -20,11 +20,14 @@ jobs:
     - name: Python requisite installs
       run: pip3 install -r requirements.txt pyinstaller
 
+    - name: Hamlib-python install
+      run: sudo apt install python3-libhamlib2
+
     - name: App creation
       run: python3 -m PyInstaller -yF rflh.py
 
     - name: Test App
-      run: chmod +x ./dist/rflh && ./dist/rflh 145 -d
+      run: cp rotor.conf dist/ && chmod +x ./dist/rflh && ./dist/rflh 145 -d
 
     - uses: actions/upload-artifact@v2
       with:
