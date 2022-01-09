@@ -22,7 +22,7 @@ jobs:
       run: python3 -m PyInstaller -yF rflh.py
 
     - name: Test App
-      run: chmod +x dist/rflh && ./dist/rflh 145 -d
+      run: chmod +x ./dist/rflh && ./dist/rflh 145 -d
 
     - uses: actions/upload-artifact@v2
       with:
