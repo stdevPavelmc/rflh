@@ -1,0 +1,4 @@
+pyrtlsdr
+matplotlib
+numpy
+scipy
