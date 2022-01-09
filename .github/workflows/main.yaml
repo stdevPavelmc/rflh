@@ -13,15 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
+
+    - name: Setup Script
+      run: ./linux_setup.sh
 
     - name: Python requisite installs
       run: pip3 install -r requirements.txt pyinstaller
-
-    - name: Hamlib-python install
-      run: sudo apt install python3-libhamlib2 libhamlib-utils libhamlib2
 
     - name: App creation
       run: python3 -m PyInstaller -yF --hidden-import Hamlib rflh.py

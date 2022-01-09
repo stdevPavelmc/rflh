@@ -18,7 +18,7 @@ pip3 install pyrtlsdr
 sudo apt install -y libhackrf0 libhackrf-dev hackrf
 
 # install support for hamlib (rotctld) python included
-sudo apt install -y libhamlib2 libhamlib-utils python3-libhamlib2 libhamlib-utils libhamlib2
+sudo apt install -y libhamlib2 libhamlib-utils python3-libhamlib2 
 
 # install app dependencies
 pip3 install matplotlib numpy scipy
