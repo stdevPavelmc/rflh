@@ -4,6 +4,5 @@ _*
 dist/*
 *.pyc
 *.pyo
-*.spec
 .vscode/
 test.py
